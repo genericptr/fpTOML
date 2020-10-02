@@ -35,11 +35,11 @@ var
   table: TTOMLTable;
   a: TTOMLArray;
 begin
-	contents := ReadFile('./tests/pass/t10.toml');
+	contents := ReadFile('./tests/pass/t0.toml');
 	doc := GetTOML(contents);
 
-  //value := doc['table-1']['key1'];
-  //writeln('value: ', string(value));
+  value := doc['database']['ports'][0];
+  writeln('port #0: ', string(value));
 
   //table := doc['table-1'] as TTOMLTable;
   //writeln('value: ', string(table['key1']));

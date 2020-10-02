@@ -40,12 +40,12 @@ hosts = [
 
 [TOML v1.0.0-rc.1](https://toml.io/en/v1.0.0-rc.1) compliant.
 
-### Features:
+### 👌 Features:
 
  - Fast. Single stream tokenizer and lexer which doesn't use regex.
  - Convert TOML data to TJSONData (see fpJSON in RTL).
 
-### TODO:
+### 🛠 TODO:
 
  - Line endings are not enforced in all areas.
  - Convert TOML date for TDateTime.
