@@ -1,0 +1,50 @@
+# String
+# There are four ways to express strings: basic, multi-line basic, literal, and multi-line literal. All strings must contain only valid UTF-8 characters.
+
+# Basic strings are surrounded by quotation marks. Any Unicode character may be used except those that must be escaped: quotation mark, backslash, and the control characters other than tab (U+0000 to U+0008, U+000A to U+001F, U+007F).
+
+str = "I'm a string. \"You can quote me\". Name\tJos\u00E9\nLocation\tSF."
+
+
+# Multi-line basic strings are surrounded by three quotation marks on each side and allow newlines. A newline immediately following the opening delimiter will be trimmed. All other whitespace and newline characters remain intact.
+
+str1 = """
+Roses are red
+Violets are blue"""
+
+
+# TOML parsers should feel free to normalize newline to whatever makes sense for their platform.
+
+# On a Unix system, the above multi-line string will most likely be the same as:
+str2 = "Roses are red\nViolets are blue"
+
+# On a Windows system, it will most likely be equivalent to:
+str3 = "Roses are red\r\nViolets are blue"
+
+# Literal strings are surrounded by single quotes. Like basic strings, they must appear on a single line:
+
+# What you see is what you get.
+winpath  = 'C:\Users\nodejs\templates'
+winpath2 = '\\ServerX\admin$\system32\'
+quoted   = 'Tom "Dubs" Preston-Werner'
+regex    = '<\i\c*\s*>'
+
+# Multi-line literal strings are surrounded by three single quotes on each side and allow newlines. Like literal strings, there is no escaping whatsoever. A newline immediately following the opening delimiter will be trimmed. All other content between the delimiters is interpreted as-is without modification.
+
+regex2 = '''I [dw]on't need \d{2} apples'''
+lines  = '''
+The first newline is
+trimmed in raw strings.
+   All other whitespace
+   is preserved.
+'''
+
+# You can write 1 or 2 single quotes anywhere within a multi-line literal string, but sequences of three or more single quotes are not permitted.
+
+quot15 = '''Here are fifteen quotation marks: """""""""""""""'''
+
+# apos15 = '''Here are fifteen apostrophes: ''''''''''''''''''  # INVALID
+apos15 = "Here are fifteen apostrophes: '''''''''''''''"
+
+# 'That's still pointless', she said.
+str4 = ''''That's still pointless', she said.'''

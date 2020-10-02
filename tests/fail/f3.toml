@@ -1,0 +1,5 @@
+# Similarly, inline tables can not be used to add keys or sub-tables to an already-defined table.
+
+[product]
+type.name = "Nail"
+type = { edible = false }  # INVALID

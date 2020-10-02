@@ -1,0 +1,44 @@
+
+# Table
+# Tables (also known as hash tables or dictionaries) are collections of key/value pairs. They appear in square brackets on a line by themselves. You can tell them apart from arrays because arrays are only ever values.
+
+[table-0]
+
+# Under that, and until the next table or EOF are the key/values of that table. Key/value pairs within tables are not guaranteed to be in any specific order.
+
+[table-1]
+key1 = "some string"
+key2 = 123
+
+[table-2]
+key1 = "another string"
+key2 = 456
+
+# Naming rules for tables are the same as for keys (see definition of Keys above).
+
+[dog."tater.man"]
+type.name = "pug"
+
+# In JSON land, that would give you the following structure:
+
+# { "dog": { "tater.man": { "type": { "name": "pug" } } } }
+
+# You don't need to specify all the super-tables if you don't want to. TOML knows how to do it for you.
+
+# [x] you
+# [x.y] don't
+# [x.y.z] need these
+[x.y.z.w] # for this to work
+
+# TODO: not sure about this yet?
+[x] # defining a super-table afterwards is ok
+
+# Like keys, you cannot define any table more than once. Doing so is invalid.
+
+# DO NOT DO THIS
+
+# [fruit]
+# apple = "red"
+
+# [fruit]
+# orange = "orange"
