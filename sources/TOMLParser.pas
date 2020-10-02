@@ -1,3 +1,10 @@
+{
+    Copyright (c) 2020 by Ryan Joseph
+  
+    TOML Parser
+    This unit implements the main parser class
+}
+
 {$mode objfpc}
 
 unit TOMLParser;

@@ -1,3 +1,10 @@
+{
+    Copyright (c) 2020 by Ryan Joseph
+  
+    TOML Parser
+    This unit implements the TOML data types
+}
+
 {$mode objfpc}
 {$modeswitch advancedrecords}
 {$scopedenums on}
