@@ -425,7 +425,7 @@ begin
             Consume;
           end;
       end;
-    TToken.HexNumber:
+    TToken.HexadecimalNumber:
       begin
         result := TTOMLNumber.Create(LongInt(StrToInt(pattern)), TTOMLNumberType.Hexadecimal);
         Consume;
@@ -659,10 +659,11 @@ begin
   // hour
   date.time := ParseTime;
 
+  // zulu
   if c = 'Z' then
     begin
       Consume('Z');
-      date.z := true;
+      date.time.z := true;
     end;
  
   // offset time
@@ -676,8 +677,6 @@ begin
 
   result := date;
 end;
-
-{$macro on}
 
 function TTOMLScanner.ReadNumber: string;
 
@@ -693,6 +692,8 @@ var
   negative: boolean = false;
   underscore: boolean = false;
   found: boolean;
+label
+  Finished;
 begin
   pattern := '';
   token := TToken.Integer;
@@ -708,7 +709,6 @@ begin
   
   while c in ['0'..'9', '.', 'e', 'E', '_'] do
     begin
-      // TODO: must be followed by a number and not first c
       if c = '_' then
         begin
           if underscore then
@@ -739,7 +739,7 @@ begin
       // parse hexadecimal
       if (c = '0') and (Peek(1) = 'x') then
         begin
-          token := TToken.HexNumber;
+          token := TToken.HexadecimalNumber;
           AdvancePattern(2);
           while true do
             begin
@@ -761,14 +761,12 @@ begin
                   if IsWhiteSpace then
                     break
                   else
-                    ParserError('invalid hex string');
+                    ParserError('Invalid hexadecimal number');
                 end;
             end;
-          result := pattern;
-          exit;
+          goto Finished;
         end;
 
-      // TODO: must be followed by a number!
       if LowerCase(c) = 'e' then
         begin
           token := TToken.RealNumber;
@@ -791,9 +789,11 @@ begin
                   AdvancePattern;
                 end;
               if not found then
-                ParserError('exponent must be followed by an integer');
+                ParserError('Exponent must be followed by an integer');
               break;
-            end;
+            end
+          else
+            ParserError('Exponent must be followed by "+" or "-"');
         end
       else if c = '.' then
         token := TToken.RealNumber;
@@ -803,6 +803,19 @@ begin
 
   if underscore then
     ParserError('Each underscore must be surrounded by at least one digit on each side');
+
+  Finished:
+
+  // incomplete prefixed number
+  if Length(pattern) = 2 then
+    case token of
+      TToken.HexadecimalNumber:
+        ParserError('Incomplete hexadecimal number');
+      TToken.OctalNumber:
+        ParserError('Incomplete octal number');
+      TToken.BinaryNumber:
+        ParserError('Incomplete binary number');
+    end;
     
   result := pattern;
 end;
@@ -826,7 +839,7 @@ begin
       token := TToken.SingleQuote;
     '#':
       begin
-        SkipLine;
+        ReadUntilEOL;
         cont := true;
       end;
     otherwise

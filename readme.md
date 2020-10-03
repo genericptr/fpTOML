@@ -52,6 +52,5 @@ hosts = [
 ### 🛠 TODO:
 
  - Line endings are not enforced in all areas.
- - Convert TOML date for TDateTime.
  - Output TOML data structures as TOML text.
  - Better support for building TOML data programmatically. 

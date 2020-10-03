@@ -85,6 +85,10 @@ type
         hours: integer;
         minutes: integer;
         seconds: double;
+        { A suffix which, when applied to a time, denotes a UTC
+        offset of 00:00; often spoken "Zulu" from the ICAO
+        phonetic alphabet representation of the letter "Z". }
+        z: boolean;
         function IsSet: boolean;
       end;
     public
@@ -98,15 +102,12 @@ type
         https://tools.ietf.org/html/rfc3339}
 
       offset: TTime;
-
-      { A suffix which, when applied to a time, denotes a UTC
-      offset of 00:00; often spoken "Zulu" from the ICAO
-      phonetic alphabet representation of the letter "Z". }
-      z: boolean;
     public
       constructor Create(localTime: TTime); overload;
       function ToString: ansistring; override;
       function AsJSON: TJSONData; override;
+      function ToISO8601String(roundSeconds: boolean = true): string;
+      function AsDateTime: TDateTime;
   end;
 
   { TTOMContainer }
@@ -172,7 +173,7 @@ operator Explicit (right: TTOMLData): double; overload;
 
 implementation
 uses
-  Variants, Types;
+  Variants, Types, DateUtils;
 
 { TOMLData Operators }
 
@@ -341,24 +342,54 @@ end;
 
 function TTOMLDate.ToString: ansistring;
 begin
-  // TODO: we need to convert this to a proper date
-  // https://tools.ietf.org/html/rfc3339
+  result := ToISO8601String(false);
+end;
 
-  result := IntToStr(year)+'/'+
-            IntToStr(month)+'/'+
-            IntToStr(day);
+function TTOMLDate.ToISO8601String(roundSeconds: boolean): string;
+var
+  s: string;
+begin
+
+  result := Format('%.*d',[4, year])+'-'+
+            Format('%.*d',[2, month])+'-'+
+            Format('%.*d',[2, day]);
 
   if time.IsSet then
     begin
-      result += ' '+IntToStr(time.hours)+':'+
-                    IntToStr(time.minutes)+':'+
-                    FloatToStr(time.seconds);
+      result += 'T';
+      result += Format('%.*d',[2, time.hours])+':'+
+                Format('%.*d',[2, time.minutes])+':';
+                
+      if roundSeconds then
+        result += Format('%.*d',[2, Trunc(time.seconds)])
+      else
+        begin
+          s := FloatToStr(time.seconds);
+          if length(s) = 1 then
+            result += '0';
+          result += s;
+        end;
+
+      if time.Z then
+        result += 'Z';
+
+      if offset.IsSet then
+        begin
+          result += '-';
+          result += Format('%.*d',[2, time.hours])+':'+
+                    Format('%.*d',[2, time.minutes]);
+        end;
     end;
 end;
 
 function TTOMLDate.AsJSON: TJSONData;
 begin
   result := CreateJSON(ToString);
+end;
+
+function TTOMLDate.AsDateTime: TDateTime;
+begin
+  result := ISO8601ToDate(ToISO8601String);
 end;
 
 { TTOMLNumber }

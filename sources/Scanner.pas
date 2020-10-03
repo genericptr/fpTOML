@@ -33,7 +33,7 @@ type
                 ID, 
                 Integer, 
                 RealNumber,
-                HexNumber,
+                HexadecimalNumber,
                 OctalNumber,
                 BinaryNumber,
                 // symbols
@@ -82,7 +82,7 @@ type
       function ReadNumber: string; virtual;
       function ReadString(count: integer): string;
 
-      procedure SkipLine;
+      procedure ReadUntilEOL;
       procedure SkipSpace;
 
 			function IsLineEnding: boolean;
@@ -226,7 +226,7 @@ begin
 		result := false;
 end;
 
-procedure TScanner.SkipLine;
+procedure TScanner.ReadUntilEOL;
 begin
 	repeat
 		ReadChar;
@@ -290,6 +290,11 @@ end;
 
 function TScanner.ReadChar: char;
 begin
+	if IsLineEnding then
+		begin
+			fileInfo.line += 1;
+			fileInfo.column := 0;
+		end;
 	currentIndex += 1;
 	c := contents[currentIndex];
 	fileInfo.column += 1;
@@ -322,9 +327,11 @@ end;
 { Moves the scanner by 'count' characters }
 procedure TScanner.Advance(count: integer);
 begin
-	currentIndex += count;
-	c := contents[currentIndex];
-	fileInfo.column += count;
+	while count > 0 do 
+		begin
+			ReadChar;
+			Dec(count);
+		end;
 end;
 
 { Advances by "count" and reads token at new position }
@@ -545,14 +552,7 @@ begin
 				  	goto TokenRead;
 				  end;
 				TCharSetWhiteSpace:
-					begin
-						if IsLineEnding then
-							begin
-								fileInfo.line += 1;
-								fileInfo.column := 0;
-							end;
-						SkipSpace;
-					end;
+					SkipSpace;
 				otherwise
 					begin
 						cont := false;

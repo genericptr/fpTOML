@@ -27,29 +27,50 @@ begin
   list.Free;
 end;
 
-var
-	contents: string;
-  doc: TTOMLDocument;
-  json: TJSONData;
-  value: TTOMLData;
-  table: TTOMLTable;
-  a: TTOMLArray;
-begin
-	contents := ReadFile('./tests/pass/t0.toml');
-	doc := GetTOML(contents);
+// TODO: make GetTOML take a IsString param which defaults to false
 
+procedure TestErrors;
+begin
+  GetTOML(ReadFile('./tests/fail/f15.toml'));
+end;
+
+procedure TestDates;
+var
+  doc: TTOMLDocument;
+  date: TTOMLDate;
+begin
+  doc := GetTOML(ReadFile('./tests/pass/t0.toml'));
+  date := doc['owner']['dob'] as TTOMLDate;
+  writeln('ToString: ', date.ToString);
+  writeln('DateTime: ', FloatToStr(date.AsDateTime));
+  writeln('DateToStr: ', DateToStr(date.AsDateTime));
+end;
+
+procedure TestJSON;
+var
+  doc: TTOMLDocument;
+begin
+  doc := GetTOML(ReadFile('./tests/pass/t0.toml'));
+  writeln(doc.AsJSON.FormatJSON);
+  doc.Free;
+end;
+
+procedure TestAccess;
+var
+  doc: TTOMLDocument;
+  value: TTOMLData;
+begin
+  doc := GetTOML(ReadFile('./tests/pass/t0.toml'));
   value := doc['database']['ports'][0];
   writeln('port #0: ', string(value));
 
-  //table := doc['table-1'] as TTOMLTable;
-  //writeln('value: ', string(table['key1']));
+  writeln('ports:');
+  for value in doc['database']['ports'] do
+    writeln('  - ', string(value));
+  doc.Free;
+end;
 
-  //for value in doc['table-1']['array'] do
-  //  writeln('value: ', string(value));
+begin
+  TestDates;
 
-  //for value in doc['table-1'] do
-  //  writeln('value: ', string(value));
-
-  json := doc.AsJSON;
-  writeln(json.FormatJSON);
 end.
