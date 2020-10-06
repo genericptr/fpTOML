@@ -358,6 +358,11 @@ begin
   Consume(TToken.SquareBracketOpen);
   result := TTOMLArray.Create;
   result.terminated := true;
+
+  // the array has no values
+  if TryConsume(TToken.SquareBracketClosed) then
+    exit(result);
+
   repeat
     value := ParseValue;
     result.Add(value);

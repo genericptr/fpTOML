@@ -71,6 +71,5 @@ begin
 end;
 
 begin
-  TestDates;
-
+  TestJSON;
 end.
