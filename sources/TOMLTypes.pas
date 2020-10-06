@@ -435,6 +435,7 @@ end;
 
 procedure TTOMLArray.Add(const data: TTOMLData);
 begin
+  data.parent := self;
   list.Add(data);
 end;
 
@@ -452,8 +453,13 @@ end;
 { TTOMLTable }
 
 function TTOMLTable.GetItem(key: TTOMLKeyType): TTOMLData;
+var
+  data: TTOMLData;
 begin
-  result := map[key];
+  if map.TryGetData(key, data) then
+    result := data
+  else
+    raise ETOMLData.Create('Key "'+key+'" doesn''t exist in table "'+name+'"');
 end;
 
 function TTOMLTable.GetItem(index: integer): TTOMLData;
@@ -481,6 +487,7 @@ procedure TTOMLTable.Add(const key: String; const data: TTOMLData);
 begin
   if Contains(key) then
     raise ETOMLData.Create('Key "'+key+'" already exists in table "'+name+'"');
+  data.parent := self;
   map.Add(key, data);
 end;
 
