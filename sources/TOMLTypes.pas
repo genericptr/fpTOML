@@ -120,6 +120,7 @@ type
   TTOMLArray = class(TTOMLContainer)
     private
       list: TTOMLDataList;
+      function GetItem(index: integer): TTOMLData; override;
     public
       terminated: boolean;
     public
@@ -129,7 +130,6 @@ type
       procedure Add(const data: TTOMLData); overload;
       function Last: TTOMLData;
       function AsJSON: TJSONData; override;
-      function GetItem(index: integer): TTOMLData; override;
       function Count: integer; override;
   end;
 
@@ -139,6 +139,9 @@ type
     private
       map: TTOMLDataMap;
       m_name: string;
+      function GetItem(key: TTOMLKeyType): TTOMLData; override;
+      function GetItem(index: integer): TTOMLData; override;
+      function GetKey(index: integer): TTOMLKeyType;
     public
       defined: boolean;
       terminated: boolean;
@@ -154,10 +157,8 @@ type
       function AsJSON: TJSONData; override;
       function Count: integer; override;
 
-      function GetItem(key: TTOMLKeyType): TTOMLData; override;
-      function GetItem(index: integer): TTOMLData; override;
-
       property Name: string read m_name;
+      property Keys[Index: Integer]: TTOMLKeyType read GetKey;
   end;
 
   { TTOMLDocument }
@@ -451,6 +452,11 @@ begin
 end;
 
 { TTOMLTable }
+
+function TTOMLTable.GetKey(index: integer): TTOMLKeyType;
+begin
+  result := map.Keys[index];
+end;
 
 function TTOMLTable.GetItem(key: TTOMLKeyType): TTOMLData;
 var

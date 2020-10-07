@@ -9,7 +9,7 @@
 
 program Tests;
 uses
-	SysUtils, BaseUnix, Classes, FPJSON, FGL, TOMLParser, TOMLTypes;
+	TOML, SysUtils, BaseUnix, Classes, FPJSON, FGL;
 
 function ScanDir(path: ansistring; fullPath: boolean = false): TStringList;
 var

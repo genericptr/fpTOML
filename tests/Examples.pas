@@ -9,7 +9,7 @@
 
 program Examples;
 uses
-	SysUtils, BaseUnix, Classes, FPJSON, FGL, TOMLParser, TOMLTypes;
+	TOML, SysUtils, BaseUnix, Classes, FPJSON, FGL;
 
 function ReadFile(path: string): string;
 var
@@ -26,8 +26,6 @@ begin
   end;
   list.Free;
 end;
-
-// TODO: make GetTOML take a IsString param which defaults to false
 
 procedure TestErrors;
 begin
