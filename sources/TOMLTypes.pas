@@ -17,6 +17,7 @@ uses
 type
   TTOMLStringType = AnsiString;
   TTOMLKeyType = ShortString;
+  TTOMLFloat = Double;
   TTOMLValueType = Variant;
   TTOMLNumberType = (Integer, 
                      Float,
@@ -46,6 +47,8 @@ type
       function GetItem(key: TTOMLKeyType): TTOMLData; overload; virtual;
     public
       parent: TTOMLData;
+      function ToInteger: integer; virtual;
+      function ToFloat: TTOMLFloat; virtual;
       function AsJSON: TJSONData; virtual;
       function Count: integer; virtual;
       property Items[index: integer]: TTOMLData read GetItem; default;
@@ -62,6 +65,8 @@ type
     public
       constructor Create(const inValue: TTOMLValueType);
       function ToString: ansistring; override;
+      function ToInteger: integer; override;
+      function ToFloat: TTOMLFloat; override;
       function AsJSON: TJSONData; override;
       function TypeString: String;
       property Value: TTOMLValueType read m_value;
@@ -165,43 +170,9 @@ type
 
   TTOMLDocument = class(TTOMLTable);
 
-{ TOMLData Operators }
-operator Explicit (right: TTOMLData): ansistring; overload;
-operator Explicit (right: TTOMLData): shortstring; overload;
-operator Explicit (right: TTOMLData): integer; overload;
-operator Explicit (right: TTOMLData): single; overload;
-operator Explicit (right: TTOMLData): double; overload;
-
 implementation
 uses
   Variants, Types, DateUtils;
-
-{ TOMLData Operators }
-
-operator Explicit (right: TTOMLData): ansistring;
-begin
-  result := right.ToString;
-end;
-
-operator Explicit (right: TTOMLData): shortstring;
-begin
-  result := right.ToString;
-end;
-
-operator Explicit (right: TTOMLData): integer;
-begin
-  result := 0;
-end;
-
-operator Explicit (right: TTOMLData): single;
-begin
-  result := 0;
-end;
-
-operator Explicit (right: TTOMLData): double;
-begin
-  result := 0;
-end;
 
 { TTOMLData }
 
@@ -256,6 +227,16 @@ end;
 function TTOMLData.AsJSON: TJSONData;
 begin
   Assert(false, 'TOML data can''t be converted to JSON');
+end;
+
+function TTOMLData.ToInteger: integer;
+begin
+  Assert(false, 'TOML data can''t be converted to integer');
+end;
+
+function TTOMLData.ToFloat: TTOMLFloat;
+begin
+  Assert(false, 'TOML data can''t be converted to float');
 end;
 
 { TTOMLValue }
@@ -317,6 +298,16 @@ begin
     otherwise
       Assert(false, 'TOML value '+IntToStr(VarType(value))+' couldn''t be mapped to JSON value.');
     end;
+end;
+
+function TTOMLValue.ToInteger: integer;
+begin
+  result := integer(value);
+end;
+
+function TTOMLValue.ToFloat: TTOMLFloat;
+begin
+  result := TTOMLFloat(value);
 end;
 
 function TTOMLValue.ToString: ansistring;
