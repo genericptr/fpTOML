@@ -10,7 +10,9 @@
 unit TOMLParser;
 interface
 uses
-  Classes, Scanner, TOMLTypes;
+  Classes, 
+  Scanner, 
+  TOMLTypes;
 
 type
   TTOMLScanner = class(TScanner)

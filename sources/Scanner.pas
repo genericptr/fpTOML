@@ -116,8 +116,8 @@ type
 implementation
 
 {$macro on}
-{$define TCharSetWhiteSpace:=' ', '	', #10, #12, #13}
 {$define TCharSetLineEnding:=#10, #12, #13}
+{$define TCharSetWhiteSpace:=' ', '	', TCharSetLineEnding}
 {$define TCharSetWord:='a'..'z','A'..'Z','_'}
 {$define TCharSetInteger:='0'..'9'}
 {$define TCharSetQuotes:='"', ''''}

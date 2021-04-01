@@ -12,7 +12,7 @@
 unit TOMLTypes;
 interface
 uses
-  SysUtils, FGL, FPJSON;
+  FGL, FPJSON, Classes, SysUtils;
 
 type
   TTOMLStringType = AnsiString;
@@ -47,6 +47,7 @@ type
       function GetItem(key: TTOMLKeyType): TTOMLData; overload; virtual;
     public
       parent: TTOMLData;
+    public
       function ToInteger: integer; virtual;
       function ToFloat: TTOMLFloat; virtual;
       function AsJSON: TJSONData; virtual;
@@ -56,7 +57,8 @@ type
   end;
   TTOMLDataList = specialize TFPGObjectList<TTOMLData>;
   TTOMLDataMap = specialize TFPGMapObject<String, TTOMLData>;
-  
+  TTOMLDataClass = class of TTOMLData;
+
   { TTOMLValue }
 
   TTOMLValue = class(TTOMLData)
@@ -135,6 +137,8 @@ type
       procedure Add(const data: TTOMLData); overload;
       function Last: TTOMLData;
       function AsJSON: TJSONData; override;
+      function AsStrings: TStringList;
+      function AsArray: TStringArray;
       function Count: integer; override;
   end;
 
@@ -157,13 +161,14 @@ type
       
       procedure Add(const key: TTOMLKeyType; const value: TTOMLValueType); overload;
       procedure Add(const key: TTOMLKeyType; const data: TTOMLData); overload;
-      function Find(const key: TTOMLKeyType): TTOMLData; inline;
-      function Contains(const key: TTOMLKeyType): boolean; inline;
+      function Find(const key: TTOMLKeyType): TTOMLData;
+      function Contains(const key: TTOMLKeyType; dataType: TTOMLDataClass = nil): boolean;
       function AsJSON: TJSONData; override;
       function Count: integer; override;
 
       property Name: string read m_name;
       property Keys[Index: Integer]: TTOMLKeyType read GetKey;
+      property Values[Index: Integer]: TTOMLData read GetItem;
   end;
 
   { TTOMLDocument }
@@ -399,6 +404,25 @@ begin
   result := list[index];
 end;
 
+function TTOMLArray.AsStrings: TStringList;
+var
+  data: TTOMLData;
+begin
+  result := TStringList.Create;
+  for data in list do
+    result.Add(AnsiString(data));
+end;
+
+function TTOMLArray.AsArray: TStringArray;
+var
+  data: TTOMLData;
+  i: integer;
+begin
+  SetLength(result, Count);
+  for i := 0 to Count - 1 do
+    result[i] := AnsiString(list[i]);
+end;
+
 function TTOMLArray.AsJSON: TJSONData;
 var
   arr: TJSONArray;
@@ -493,11 +517,15 @@ begin
   Add(key, TTOMLValue.Create(value));
 end;
 
-function TTOMLTable.Contains(const key: TTOMLKeyType): boolean;
+function TTOMLTable.Contains(const key: TTOMLKeyType; dataType: TTOMLDataClass = nil): boolean;
 var
   data: TTOMLData;
 begin
   result := map.TryGetData(key, data);
+  if result and 
+    assigned(dataType) and 
+    not data.InheritsFrom(dataType) then
+    result := false;
 end;
 
 function TTOMLTable.Find(const key: TTOMLKeyType): TTOMLData;

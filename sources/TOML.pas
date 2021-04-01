@@ -1,10 +1,11 @@
 {$mode objfpc}
+{$unitpath sources}
 
 unit TOML;
 interface
 uses
-  TOMLParser,
-  TOMLTypes;
+  TOMLParser,// in 'sources/TOMLParser.pas',
+  TOMLTypes;// in 'sources/TOMLTypes.pas';
 
 type
   TTOMLStringType = TOMLTypes.TTOMLStringType;
