@@ -51,6 +51,6 @@ hosts = [
 
 ### 🛠 TODO:
 
- - Line endings are not enforced in all areas.
+ - Line endings/white space rules are not 100% correct
  - Output TOML data structures as TOML text.
  - Better support for building TOML data programmatically. 
