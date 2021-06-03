@@ -44,6 +44,7 @@ type
                      Hexadecimal);
 
   { TTOMLData }
+
   ETOMLData = class(Exception);
   TTOMLData = class
     private type
@@ -134,7 +135,7 @@ type
       function AsDateTime: TDateTime;
   end;
 
-  { TTOMContainer }
+  { TTOMLContainer }
 
   TTOMLContainer = class(TTOMLData);
   TTOMLContainerList = specialize TFPGList<TTOMLContainer>;
