@@ -44,11 +44,11 @@ begin
   writeln('DateToStr: ', DateToStr(date.AsDateTime));
 end;
 
-procedure TestJSON;
+procedure TestJSON(test: string);
 var
   doc: TTOMLDocument;
 begin
-  doc := GetTOML(ReadFile('./tests/pass/t0.toml'));
+  doc := GetTOML(ReadFile('./tests/pass/'+test+'.toml'));
   writeln(doc.AsJSON.FormatJSON);
   doc.Free;
 end;
@@ -68,6 +68,27 @@ begin
   doc.Free;
 end;
 
+{
+  BUGS:
+
+  🥕 quot15 = '''Here are fifteen quotation marks: """""""""""""""'''
+
+    "quot15" : "ere are fifteen quotation marks: \"\"\"\"\"\"\"\"\"\"\"\"\"\"\"",
+  
+  🥕  numbers = [ 0.1, 0.2, 0.5, 1, 2, 5 ]
+  
+    "numbers" : [
+      1.0000000000000001E-001,
+      2.0000000000000001E-001,
+      5.0000000000000000E-001,
+      1,
+      2,
+      5
+    ],
+
+
+}
+
 begin
-  TestJSON;
+  TestJSON('t14');
 end.

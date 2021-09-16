@@ -63,6 +63,8 @@ type
     private
       function GetItem(index: integer): TTOMLData; overload; virtual;
       function GetItem(key: TTOMLKeyType): TTOMLData; overload; virtual;
+      procedure SetItem(index: integer; item: TTOMLData); virtual; overload;
+      procedure SetItem(key: TTOMLKeyType; item: TTOMLData); virtual; overload; 
     public
       parent: TTOMLData;
     public
@@ -70,7 +72,7 @@ type
       function ToFloat: TTOMLFloat; virtual;
       function AsJSON: TJSONData; virtual;
       function Count: integer; virtual;
-      property Items[index: integer]: TTOMLData read GetItem; default;
+      property Items[index: integer]: TTOMLData read GetItem write SetItem; default;
       function GetEnumerator: TEnumerator;
   end;
   TTOMLDataList = specialize TFPGObjectList<TTOMLData>;
@@ -129,6 +131,7 @@ type
       offset: TTime;
     public
       constructor Create(localTime: TTime); overload;
+
       function ToString: ansistring; override;
       function AsJSON: TJSONData; override;
       function ToISO8601String(roundSeconds: boolean = true): string;
@@ -151,8 +154,10 @@ type
     public
       constructor Create;
       destructor Destroy; override;
+
       procedure Add(const value: TTOMLValueType); overload;
       procedure Add(const data: TTOMLData); overload;
+      
       function Last: TTOMLData;
       function AsJSON: TJSONData; override;
       function AsStrings: TStringList;
@@ -168,6 +173,7 @@ type
       m_name: string;
       function GetItem(key: TTOMLKeyType): TTOMLData; override;
       function GetItem(index: integer): TTOMLData; override;
+      procedure SetItem(key: TTOMLKeyType; item: TTOMLData); override;
       function GetKey(index: integer): TTOMLKeyType;
     public
       defined: boolean;
@@ -179,6 +185,8 @@ type
       
       procedure Add(const key: TTOMLKeyType; const value: TTOMLValueType); overload;
       procedure Add(const key: TTOMLKeyType; const data: TTOMLData); overload;
+      procedure Put(const key: String; const data: TTOMLData);
+
       function Find(const key: TTOMLKeyType): TTOMLData;
       function Contains(const key: TTOMLKeyType; dataType: TTOMLDataClass = nil): boolean;
       function AsJSON: TJSONData; override;
@@ -240,6 +248,16 @@ end;
 function TTOMLData.GetItem(key: TTOMLKeyType): TTOMLData;
 begin
   Assert(false, ClassName+' doesn''t implement keys');
+end;
+
+procedure TTOMLData.SetItem(index: integer; item: TTOMLData);
+begin
+  Assert(false, ClassName+' doesn''t implement setting by index');
+end;
+
+procedure TTOMLData.SetItem(key: TTOMLKeyType; item: TTOMLData);
+begin
+  Assert(false, ClassName+' doesn''t implement setting by key');
 end;
 
 function TTOMLData.Count: integer;
@@ -506,6 +524,11 @@ begin
   result := map.data[index];
 end;
 
+procedure TTOMLTable.SetItem(key: TTOMLKeyType; item: TTOMLData);
+begin
+  Put(key, item);
+end;
+
 function TTOMLTable.Count: integer;
 begin
   result := map.Count;
@@ -535,6 +558,18 @@ begin
   Add(key, TTOMLValue.Create(value));
 end;
 
+procedure TTOMLTable.Put(const key: String; const data: TTOMLData);
+var
+  index: integer;
+begin
+  data.parent := self;
+
+  if map.Find(key, index) then
+    map.data[index] := data
+  else
+    map.Add(key, data);
+end;
+
 function TTOMLTable.Contains(const key: TTOMLKeyType; dataType: TTOMLDataClass = nil): boolean;
 var
   data: TTOMLData;
@@ -561,6 +596,7 @@ begin
   m_name := name;
   defined := false;
   map := TTOMLDataMap.Create(true);
+  map.Sorted := true;
 end;
 
 destructor TTOMLTable.Destroy;
