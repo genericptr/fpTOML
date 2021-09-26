@@ -53,6 +53,16 @@ begin
   doc.Free;
 end;
 
+procedure TestString(test: string);
+var
+  doc: TTOMLDocument;
+begin
+  writeln(test);
+  doc := GetTOML(test);
+  writeln(doc.AsJSON.FormatJSON);
+  doc.Free;
+end;
+
 procedure TestAccess;
 var
   doc: TTOMLDocument;
@@ -69,7 +79,7 @@ begin
 end;
 
 {
-  BUGS:
+  BUGS
 
   🥕 quot15 = '''Here are fifteen quotation marks: """""""""""""""'''
 
@@ -90,5 +100,7 @@ end;
 }
 
 begin
-  TestJSON('t14');
+  TestJSON('t8');
+  //TestString('quot15 = ''''''Here are fifteen quotation marks: """""""""""""""''''''');
+  //TestString('test = ''''''ABC''''''');
 end.

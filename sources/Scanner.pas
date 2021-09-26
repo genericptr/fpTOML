@@ -275,12 +275,17 @@ end;
 
 function TScanner.Peek(str: string; offset: integer = 0): boolean;
 var
-	i: integer;
+	i, contentsOffset: integer;
 begin
-	result := true;
-	for i := 1 + offset to length(str) do
-		if contents[currentIndex + (i - 1)] <> str[i] then
-			exit(false);
+	result := false;
+	for i := 0 to length(str) - 1 do
+		begin
+			contentsOffset := currentIndex + offset + i;
+			if (contentsOffset < length(contents)) and (contents[contentsOffset] = str[i + 1]) then
+				result := true
+			else
+				exit(false);
+		end;
 end;
 
 function TScanner.PeekString(count: integer): string;
