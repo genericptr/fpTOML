@@ -44,23 +44,19 @@ begin
   writeln('DateToStr: ', DateToStr(date.AsDateTime));
 end;
 
-procedure TestJSON(test: string);
+procedure TestJSON(path: string);
 var
   doc: TTOMLDocument;
 begin
-  doc := GetTOML(ReadFile('./tests/pass/'+test+'.toml'));
+  doc := GetTOML(ReadFile(path));
   writeln(doc.AsJSON.FormatJSON);
   doc.Free;
 end;
 
-procedure TestString(test: string);
-var
-  doc: TTOMLDocument;
+function TestString(test: string): TTOMLDocument;
 begin
   writeln(test);
-  doc := GetTOML(test);
-  writeln(doc.AsJSON.FormatJSON);
-  doc.Free;
+  result := GetTOML(test);
 end;
 
 procedure TestAccess;
@@ -78,29 +74,14 @@ begin
   doc.Free;
 end;
 
-{
-  BUGS
-
-  🥕 quot15 = '''Here are fifteen quotation marks: """""""""""""""'''
-
-    "quot15" : "ere are fifteen quotation marks: \"\"\"\"\"\"\"\"\"\"\"\"\"\"\"",
-  
-  🥕  numbers = [ 0.1, 0.2, 0.5, 1, 2, 5 ]
-  
-    "numbers" : [
-      1.0000000000000001E-001,
-      2.0000000000000001E-001,
-      5.0000000000000000E-001,
-      1,
-      2,
-      5
-    ],
-
-
-}
-
+var
+  doc: TTOMLDocument;
+  path: string;
 begin
-  TestJSON('t8');
+  path := './tests/pass/t15.toml';
+  TestJSON(path);
+  //TestJSON('./tests/fail/f16.toml');
   //TestString('quot15 = ''''''Here are fifteen quotation marks: """""""""""""""''''''');
-  //TestString('test = ''''''ABC''''''');
+  //doc := TestString('flt5 = 1e06');
+  //writeln(Double(doc['real']):1:1);
 end.

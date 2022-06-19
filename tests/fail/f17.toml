@@ -1,0 +1,3 @@
+
+# inline tables do not allow trailing commas
+table = { A = 1, }
