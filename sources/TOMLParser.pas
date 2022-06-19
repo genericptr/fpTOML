@@ -346,23 +346,34 @@ begin
   Consume(TToken.SquareBracketClosed);
 end;
 
+{ Parse inline tables
+  https://toml.io/en/v1.0.0-rc.1#inline-table }
+
 function TTOMLScanner.ParseInlineTable: TTOMLTable;
 begin
+  // inline tables don't allow newlines so we can override the newline behavior
+  // of the scanner by enabling newlines as tokens
+  readLineEndingsAsTokens := true;
+
   Consume(TToken.CurlyBracketOpen);
 
   // push new table to stack
   result := TTOMLTable.Create;
   containers.Add(result);
 
-  // TODO: Inline tables are intended to appear on a single line. 
-  // so we must fail on line breaks
-
   repeat
     ParsePair;
-    // TODO: trailing commas are not allowed in inline tables!
+
     if TryConsume(TToken.Comma) then
-      continue;
+      begin
+        // curly bracket found for pair
+        if TryConsume(TToken.CurlyBracketClosed) then
+          ParserError('Inline tables do not allow trailing commas.');
+        continue;
+      end;
   until TryConsume(TToken.CurlyBracketClosed);
+
+  readLineEndingsAsTokens := false;
 
   result.terminated := true;
 
