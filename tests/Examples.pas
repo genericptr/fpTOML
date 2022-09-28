@@ -75,7 +75,6 @@ begin
 end;
 
 var
-  doc: TTOMLDocument;
   path: string;
 begin
   path := './tests/pass/t15.toml';

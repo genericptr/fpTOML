@@ -374,17 +374,12 @@ end;
 
 
 function TScanner.ReadNumber: string;
-var
-	negative: boolean = false;
 begin
 	pattern := '';
 	token := TToken.Integer;
 
 	if c = '-' then
-		begin
-			negative := true;
-			AdvancePattern;
-		end;
+		AdvancePattern;
 
 	if c = '+' then
 		AdvancePattern;

@@ -243,11 +243,13 @@ end;
 function TTOMLData.GetItem(index: integer): TTOMLData;
 begin
   Assert(false, ClassName+' doesn''t implement indexing');
+  result := nil;
 end;
 
 function TTOMLData.GetItem(key: TTOMLKeyType): TTOMLData;
 begin
   Assert(false, ClassName+' doesn''t implement keys');
+  result := nil;
 end;
 
 procedure TTOMLData.SetItem(index: integer; item: TTOMLData);
@@ -263,21 +265,25 @@ end;
 function TTOMLData.Count: integer;
 begin
   Assert(false, ClassName+' doesn''t implement indexing');
+  result := 0;
 end;
 
 function TTOMLData.AsJSON: TJSONData;
 begin
   Assert(false, 'TOML data can''t be converted to JSON');
+  result := nil;
 end;
 
 function TTOMLData.ToInteger: integer;
 begin
   Assert(false, 'TOML data can''t be converted to integer');
+  result := 0;
 end;
 
 function TTOMLData.ToFloat: TTOMLFloat;
 begin
   Assert(false, 'TOML data can''t be converted to float');
+  result := 0;
 end;
 
 { TTOMLValue }
@@ -451,9 +457,9 @@ end;
 
 function TTOMLArray.AsArray: TStringArray;
 var
-  data: TTOMLData;
   i: integer;
 begin
+  result := nil;
   SetLength(result, Count);
   for i := 0 to Count - 1 do
     result[i] := AnsiString(list[i]);
