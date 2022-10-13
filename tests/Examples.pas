@@ -77,7 +77,8 @@ end;
 var
   path: string;
 begin
-  path := './tests/pass/t15.toml';
+  path := './tests/pass/t12.toml';
+  path := '/Users/ryanjoseph/Desktop/t1.toml';
   TestJSON(path);
   //TestJSON('./tests/fail/f16.toml');
   //TestString('quot15 = ''''''Here are fifteen quotation marks: """""""""""""""''''''');

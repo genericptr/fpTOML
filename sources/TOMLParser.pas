@@ -373,7 +373,9 @@ begin
       end;
   until TryConsume(TToken.CurlyBracketClosed);
 
+  // disable EOL tokens and clear the next one if it's found
   readLineEndingsAsTokens := false;
+  TryConsume(TToken.EOL);
 
   result.terminated := true;
 
@@ -807,28 +809,24 @@ begin
           token := TToken.RealNumber;
           AdvancePattern;
           if (c = '-') or (c = '+') then
+            AdvancePattern;
+          found := false;
+          while c in ['0'..'9'] do
             begin
-              AdvancePattern;
-              found := false;
-              while c in ['0'..'9'] do
+              found := true;
+              if c = '_' then
                 begin
-                  found := true;
-                  if c = '_' then
-                    begin
-                      if underscore then
-                        ParserError('Each underscore must be surrounded by at least one digit on each side');
-                      ReadChar;
-                      underscore := true;
-                      continue;
-                    end;
-                  AdvancePattern;
+                  if underscore then
+                    ParserError('Each underscore must be surrounded by at least one digit on each side');
+                  ReadChar;
+                  underscore := true;
+                  continue;
                 end;
-              if not found then
-                ParserError('Exponent must be followed by an integer');
-              break;
-            end
-          else
-            ParserError('Exponent must be followed by "+" or "-"');
+              AdvancePattern;
+            end;
+          if not found then
+            ParserError('Exponent must be followed by an integer');
+          break;
         end
       else if c = '.' then
         token := TToken.RealNumber;

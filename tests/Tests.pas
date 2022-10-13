@@ -66,6 +66,7 @@ var
   doc: TTOMLDocument;
   json: TJSONData;
 begin
+  dir := ExpandFileName(dir);
   files := ScanDir(dir, true);
   for path in files do
     begin
@@ -73,14 +74,14 @@ begin
       ext := ExtractFileExt(path);
       if ext = '.toml' then
         begin
-          write(name);
+          write(ExtractFileName(dir), '/', name);
           doc := nil;
           contents := ReadFile(path);
           try
             doc := GetTOML(contents);
             if expectedFail then
               begin
-                WriteLn(' 🔴 failed!');
+                WriteLn(' 🔴 Failed!');
                 halt;
               end;
           except
@@ -88,7 +89,7 @@ begin
               begin
                 if not expectedFail then
                   begin
-                    WriteLn(' 🔴 failed!');
+                    WriteLn(' 🔴 ', E.Message);
                     halt;
                   end;
               end;
@@ -107,6 +108,6 @@ begin
 end;
 
 begin
-  RunTests('/Users/ryanjoseph/Developer/Projects/FPC/TOML/tests/pass', false);
-  RunTests('/Users/ryanjoseph/Developer/Projects/FPC/TOML/tests/fail', true);
+  RunTests('./pass', false);
+  RunTests('./fail', true);
 end.
