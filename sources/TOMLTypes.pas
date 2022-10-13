@@ -185,7 +185,8 @@ type
       
       procedure Add(const key: TTOMLKeyType; const value: TTOMLValueType); overload;
       procedure Add(const key: TTOMLKeyType; const data: TTOMLData); overload;
-      procedure Put(const key: String; const data: TTOMLData);
+      procedure Put(const key: String; const value: TTOMLValueType); overload;
+      procedure Put(const key: String; const data: TTOMLData); overload;
 
       function Find(const key: TTOMLKeyType): TTOMLData;
       function Contains(const key: TTOMLKeyType; dataType: TTOMLDataClass = nil): boolean;
@@ -564,6 +565,11 @@ begin
   Add(key, TTOMLValue.Create(value));
 end;
 
+procedure TTOMLTable.Put(const key: String; const value: TTOMLValueType);
+begin
+  Put(key, TTOMLValue.Create(value));
+end;
+
 procedure TTOMLTable.Put(const key: String; const data: TTOMLData);
 var
   index: integer;
@@ -571,7 +577,10 @@ begin
   data.parent := self;
 
   if map.Find(key, index) then
-    map.data[index] := data
+    begin
+      // replace existing item
+      map.data[index] := data;
+    end
   else
     map.Add(key, data);
 end;
