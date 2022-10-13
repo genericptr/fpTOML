@@ -6,4 +6,4 @@ OPTIONS = -Fu../sources -vm6058 -gw -godwarfcpp -Sa
 all:
 	mkdir -p ${OUTPUT}
 	${COMPILER} ${OPTIONS} -FU${OUTPUT} ${PROGRAM}
-	${EXECUTABLE}
+	./Tests
